@@ -1,39 +1,24 @@
-import threading
-import time
+import os.path
 
 import cv2
-import keyboard
-from threading import Thread
-from queue import Queue
 
+VIDEO_PATH = './clipped/'
+with open('./Classes.txt', 'r') as f:
+    cls = f.read().split()
+    print(cls)
+for video in cls:
+    print(video)
+    path = os.path.join(VIDEO_PATH, video+'.mp4')
+    # print(path)
+    cap = cv2.VideoCapture(path)
 
-# class TestThread:
-#     def __init__(self, button: str):
-#         self.button = button
-#         self.is_recording = False
-#         self.counter = 0
-#         self.start_time = time.perf_counter()
-#
-#         keyboard.add_hotkey(button, self.toggle, trigger_on_release=False)
-#         self.thread = Thread(target=self.update)
-#         self.thread.start()
-#
-#     def toggle(self):
-#         self.is_recording = not self.is_recording
-#
-#     def update(self):
-#         while True:
-#             self.counter += 1
-#             print(f'{self.counter}\t{time.perf_counter()-self.start_time}')
-#             # print(self.counter*1e-6 - (time.perf_counter()-self.start_time))
-#
-#
-# if __name__ == '__main__':
-#     testthread = TestThread('space')
-#     while True:
-#         if keyboard.is_pressed('q'):
-#             break
-
-
-fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-writer = cv2.VideoWriter('xyz.mp4', fourcc, 20.0, (1, 1))
+    while cap.isOpened():
+        # print('hello')
+        ret, frame = cap.read()
+        if ret:
+            cv2.imshow('frame', frame)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+        else:
+            cap.release()
+            cv2.destroyAllWindows()

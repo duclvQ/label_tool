@@ -1,5 +1,8 @@
 import numpy as np
 
+import utils
+
+
 MIN_INSERTION = 5
 MAX_INSERTION = 10
 MIN_DURATION = 2
@@ -11,6 +14,10 @@ class RandomVideo:
         with open('classes.txt', 'r') as f:
             self.cls = f.read().split()
             self.random_indexing()
+
+            for cls in self.cls:
+                utils.order_q.put(cls)
+
             # self.mini_insertion()
             self.random_insertion()
 
@@ -43,4 +50,5 @@ class RandomVideo:
 
 if __name__ == '__main__':
     cls = RandomVideo().cls
-    print(cls)
+    while not utils.order_q.empty():
+        print(utils.order_q.get())
