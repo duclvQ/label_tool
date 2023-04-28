@@ -1,4 +1,10 @@
+# demo files
+test.py
+test_annot.txt
 *.mp4
+
+# folders
 __pycache__/
 Clipped/
 .idea/
+data/

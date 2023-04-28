@@ -12,7 +12,7 @@ import utils
 
 
 VIDEO_PATH = './clipped/'
-DEFAULT_DELAY = 0.5
+DEFAULT_DELAY = 0
 
 
 def shuffle_clips():
@@ -22,7 +22,6 @@ def shuffle_clips():
     for video in playlist:
         print(video)
         if isinstance(video, str):
-            # utils.order_q.put(video)
             time.sleep(DEFAULT_DELAY)
             path = os.path.join(VIDEO_PATH, video+'.mp4')
             cap = cv2.VideoCapture(path)
@@ -32,6 +31,8 @@ def shuffle_clips():
                 if ret:
                     cv2.imshow('Clip', frame)
                     if cv2.waitKey(10) & 0xFF == ord('q'):
+                        cap.release()
+                        cv2.destroyWindow('Clip')
                         break
                 else:
                     cap.release()
@@ -44,16 +45,21 @@ def shuffle_clips():
 
 class ShuffleThread:
     def __init__(self):
-        self.thread = Thread(target=self.shuffle, daemon=False, name='Shuffle Thread')
+        self.thread = Thread(target=self.shuffle, daemon=True, name='Shuffle Thread')
         self.thread.start()
 
-    def shuffle(self):
-        # if utils.toggle_var is not None:
-        #     print(utils.toggle_var)
+    @staticmethod
+    def shuffle():
         while True:
             if utils.toggle_var == 'start' \
                     or __name__ == '__main__':
+                # print(utils.toggle_var)
                 shuffle_clips()
+                print('**** Finished ****')
+                utils.toggle_var = 'stop'
+                utils.toggle_q.put_nowait('stop')
+            # elif utils.toggle_var != 'start':
+            #     print(utils.toggle_var)
 
 
 if __name__ == '__main__':

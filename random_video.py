@@ -1,3 +1,5 @@
+import queue
+
 import numpy as np
 
 import utils
@@ -12,11 +14,14 @@ MAX_DURATION = 5
 class RandomVideo:
     def __init__(self):
         with open('classes.txt', 'r') as f:
-            self.cls = f.read().split()
+            self.cls = f.read().split()[:utils.MAXSIZE]
             self.random_indexing()
 
-            for cls in self.cls:
-                utils.order_q.put(cls)
+            try:
+                for cls in self.cls:
+                    utils.order_q.put_nowait(cls)
+            except queue.Full:
+                print(len(utils.order_q.queue))
 
             # self.mini_insertion()
             self.random_insertion()
