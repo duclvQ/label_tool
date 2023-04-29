@@ -11,7 +11,7 @@ MIN_DURATION = 2
 MAX_DURATION = 5
 
 
-class RandomVideo:
+class VideoRandomizer:
     def __init__(self):
         with open('classes.txt', 'r') as f:
             self.cls = f.read().split()[:utils.MAXSIZE]
@@ -29,20 +29,16 @@ class RandomVideo:
     def random_indexing(self):
         np.random.shuffle(self.cls)
 
-    def mini_insertion(self):
-        length = len(self.cls)
-        for i in range(length):
-            self.cls.insert(length-i, self.mini_delay)
-
     def random_insertion(self):
-        num_insertion = np.random.randint(1, MAX_INSERTION)
+        num_insertion = np.random.randint(MIN_INSERTION, MAX_INSERTION)
+        sleep_arr = np.random.randint(low=MIN_DURATION, high=MAX_DURATION, size=utils.MAXSIZE)
 
-        idx = np.arange(len(self.cls))
-        np.random.shuffle(idx)
-        idx = idx[: num_insertion]
+        for i in range(utils.MAXSIZE):
+            self.cls.insert(utils.MAXSIZE - i - 1, sleep_arr[i])
 
-        for i in idx:
-            self.cls.insert(i, self.random_delay)
+    def mini_insertion(self):
+        for i in range(len(self.cls)):
+            self.cls.insert(len(self.cls)-i, self.mini_delay)
 
     @property
     def random_delay(self):
@@ -54,6 +50,6 @@ class RandomVideo:
 
 
 if __name__ == '__main__':
-    cls = RandomVideo().cls
+    cls = VideoRandomizer().cls
     while not utils.order_q.empty():
         print(utils.order_q.get())

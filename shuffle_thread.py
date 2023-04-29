@@ -7,7 +7,7 @@ import time
 import os
 import numbers
 
-from random_video import RandomVideo
+from random_video import VideoRandomizer
 import utils
 
 
@@ -16,7 +16,7 @@ DEFAULT_DELAY = 0
 
 
 def shuffle_clips():
-    playlist = RandomVideo().cls
+    playlist = VideoRandomizer().cls
     print(playlist)
 
     for video in playlist:

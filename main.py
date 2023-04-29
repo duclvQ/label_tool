@@ -42,11 +42,15 @@ if __name__ == '__main__':
     ShuffleThread()
     CameraThread(src)
 
+    keyboard.wait('space')
+
     while True:
         time.sleep(.01)
         try:
-            if (utils.start_q.full() and utils.stop_q.full()) \
-                    or utils.toggle_q.get_nowait() == 'stop':
+            if (len(utils.start_q.queue) == len(utils.order_q.queue) and
+                len(utils.start_q.queue) == len(utils.order_q.queue)) or \
+                    utils.toggle_q.get_nowait() == 'stop':
+                print('--- Name ID:', name_id)
                 utils.make_dir(mode='annot', name_id=name_id)
                 path = os.path.join('data', str(name_id), 'annot', str(name_id)+'.txt')
                 create_annot(path)
