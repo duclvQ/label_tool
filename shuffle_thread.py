@@ -56,8 +56,7 @@ class ShuffleThread:
                 # print(utils.toggle_var)
                 shuffle_clips()
                 print('**** Finished ****')
-                utils.toggle_var = 'stop'
-                utils.toggle_q.put_nowait('stop')
+                keyboard.wait('space')
             # elif utils.toggle_var != 'start':
             #     print(utils.toggle_var)
 
