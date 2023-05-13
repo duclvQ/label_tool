@@ -19,6 +19,7 @@ class VideoRandomizer:
 
             try:
                 for cls in self.cls:
+                    print(cls)
                     utils.order_q.put_nowait(cls)
             except queue.Full:
                 print(len(utils.order_q.queue))

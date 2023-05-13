@@ -17,7 +17,7 @@ class CameraThread:
         self.path = os.path.join('data', str(self.name_id), 'video', str(self.name_id) + '.mp4')
 
         self.fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-        self.writer = cv2.VideoWriter(self.path, self.fourcc, 30.0,
+        self.writer = cv2.VideoWriter(self.path, self.fourcc, 25.0,
                                       (int(self.cap.get(3)), int(self.cap.get(4))))
 
         self.cam_thread = Thread(target=self.run, daemon=True, name='Cam_Thread')
@@ -29,12 +29,27 @@ class CameraThread:
     def run(self):
         while True:
             _, frame = self.cap.read()
+
+            window_name = 'Image'
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            org = (50, 50)
+            fontScale = 1
+            color = (255, 0, 0)
+            thickness = 2
+            frame = cv2.putText(frame, str(utils.frame), org, font,
+                                fontScale, color, thickness, cv2.LINE_AA)
+
+
+
+
             cv2.imshow('frame', frame)
 
             if utils.toggle_var == 'start':
+                utils.frame += 1
                 self.writer.write(frame)
 
             elif utils.toggle_var == 'stop':
+                utils.frame = 0
                 self.writer.release()
 
             if cv2.waitKey(10) & 0xFF == ord('q'):
@@ -50,14 +65,15 @@ class CameraThread:
         if self.is_running:
             utils.make_dir(mode='video', name_id=self.name_id)
             self.path = os.path.join('data', str(self.name_id), 'video', str(self.name_id) + '.mp4')
-            self.writer = cv2.VideoWriter(self.path, self.fourcc, 30.0,
+            self.writer = cv2.VideoWriter(self.path, self.fourcc, 25.0,
                                           (int(self.cap.get(3)), int(self.cap.get(4))))
         elif not self.is_running:
             self.name_id += 1
 
 
 if __name__ == '__main__':
-    src = 'test_vid.mp4'
+    src = "rtsp://admin:comvis123@192.168.100.125:554/Streaming/Channels/101/"
+
     camera = CameraThread(src)
 
     while True:
