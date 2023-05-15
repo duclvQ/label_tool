@@ -51,8 +51,8 @@ class ShuffleThread:
     @staticmethod
     def shuffle():
         while True:
-            if utils.toggle_var == 'start' \
-                    or __name__ == '__main__':
+            #if utils.toggle_var == 'start' \
+            #        or __name__ == '__main__':
                 # print(utils.toggle_var)
                 shuffle_clips()
                 print('**** Finished ****')
@@ -60,12 +60,3 @@ class ShuffleThread:
             # elif utils.toggle_var != 'start':
             #     print(utils.toggle_var)
 
-
-if __name__ == '__main__':
-    ShuffleThread()
-    while True:
-        # running_threads = [t.name for t in threading.enumerate() if t.is_alive()]
-        # print(f"Running threads: {running_threads}")
-        time.sleep(1)
-        if keyboard.is_pressed('q'):
-            break
