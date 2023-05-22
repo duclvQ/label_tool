@@ -3,16 +3,16 @@ import time
 from queue import Queue
 import keyboard
 
-MAXSIZE = 19
+MAXSIZE = 5
 start_time = time.perf_counter()
 
 order_q = Queue(maxsize=MAXSIZE)
 start_q = Queue(maxsize=MAXSIZE)
 stop_q = Queue(maxsize=MAXSIZE)
-#toggle_q = Queue(maxsize=1)
+queues = [order_q, start_q, stop_q]
 
 toggle_var = None
-
+name_id = 1
 frame = 0
 
 
@@ -22,37 +22,24 @@ class ButtonManager:
         self.pre_space = False
         self.bind_key()
 
-    def on_press_a(self):
+    @staticmethod
+    def on_press_a():
         if not start_q.full():
-            press_time = time.perf_counter() - start_time
-            press_time = round(press_time, 2)
             start_q.put(frame)
-        
 
-    def on_press_b(self):
+    @staticmethod
+    def on_press_b():
         if not stop_q.full():
-            press_time = time.perf_counter() - start_time
-            press_time = round(press_time, 2)
-            # stop_q.put(press_time)
-            # print(press_time)
             stop_q.put(frame)
-       
 
     def on_press_space(self):
-        global toggle_var, toggle_q, start_time
+        global toggle_var, start_time
         self.pre_space = not self.pre_space
-        print('space')
         if self.pre_space:
             toggle_var = 'start'
-            #toggle_q.put('start')
-
-            # Restart timer
-            start_time = time.perf_counter()
 
         elif not self.pre_space:
-            print(frame)
             toggle_var = 'stop'
-            #toggle_q.put('stop')
 
         print('-'*20)
 
@@ -62,8 +49,8 @@ class ButtonManager:
         keyboard.add_hotkey('space', self.on_press_space)
 
 
-def make_dir(mode, name_id):
-    _dir = os.path.join('data', str(name_id), mode)
+def make_dir(name):
+    _dir = os.path.join('data', str(name))
     if not os.path.exists(_dir):
         os.makedirs(_dir)
 
