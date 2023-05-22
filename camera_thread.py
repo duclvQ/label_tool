@@ -14,16 +14,19 @@ mp_hands = mp.solutions.hands
 
 class CameraThread:
     def __init__(self, src=0):
-        self.cap = cv2.VideoCapture(src, cv2.CAP_DSHOW)
-        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
-        self.name_id = 1
+        self.cap = cv2.VideoCapture(src)
+        #self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+        #self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+        self.name_id = 100
         utils.make_dir(mode='video', name_id=self.name_id)
         self.path = os.path.join('data', str(self.name_id), 'video', str(self.name_id) + '.mp4')
 
         self.fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        # Lấy kích thước video
+        self.frame_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        self.frame_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         self.writer = cv2.VideoWriter(self.path, self.fourcc, 25.0,
-                                      (int(self.cap.get(3)), int(self.cap.get(4))))
+                                      (int(self.cap.get(3)), int(self.cap.get(4))-40))
 
         self.cam_thread = Thread(target=self.run, daemon=True, name='Cam_Thread')
         self.cam_thread.start()
@@ -37,32 +40,34 @@ class CameraThread:
         frame_count = 0
         while True:
             _, frame = self.cap.read()
+            if not _: continue
             annotated_frame = frame.copy()
             window_name = 'Image'
             font = cv2.FONT_HERSHEY_SIMPLEX
-            org = (50, 50)
+            org = (250, 50)
             fontScale = 1
             color = (255, 0, 0)
             thickness = 2
-            annotated_frame = cv2.putText(annotated_frame, str(utils.frame), org, font,
+            #annotated_frame = cv2.putText(annotated_frame, str(utils.frame), org, font,
+            #                    fontScale, color, thickness, cv2.LINE_AA)
+
+            annotated_frame = cv2.putText(annotated_frame, str(frame_count), (250, 70), font,
                                 fontScale, color, thickness, cv2.LINE_AA)
 
-            annotated_frame = cv2.putText(annotated_frame, str(frame_count), (50, 30), font,
-                                fontScale, color, thickness, cv2.LINE_AA)
-
-            
+            height, width, _ = frame[40:, :].shape
             elapsed_time = time.time() - start_time
             fps = frame_count / elapsed_time
             frame_count+=1
 
             # Hiển thị FPS trên khung hình
-            cv2.putText(annotated_frame, f"FPS: {round(fps, 2)}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            cv2.putText(annotated_frame, f"FPS: {round(fps, 2)}", (30, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            #cropped_frame = frame[40:, :]
 
             cv2.imshow('frame', annotated_frame)
 
             if utils.toggle_var == 'start':
                 utils.frame += 1
-                self.writer.write(frame)
+                self.writer.write(frame[40:, :])
                 #self.pose_list.append(self.estimate(frame))
 
             elif utils.toggle_var == 'stop':
@@ -85,7 +90,7 @@ class CameraThread:
             utils.make_dir(mode='video', name_id=self.name_id)
             self.path = os.path.join('data', str(self.name_id), 'video', str(self.name_id) + '.mp4')
             self.writer = cv2.VideoWriter(self.path, self.fourcc, 25.0,
-                                          (int(self.cap.get(3)), int(self.cap.get(4))))
+                                          (int(self.cap.get(3)), int(self.cap.get(4))-40))
         elif not self.is_running:
             self.name_id += 1
  

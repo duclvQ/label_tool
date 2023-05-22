@@ -33,7 +33,7 @@ def create_annot(path):
 
 if __name__ == '__main__':
     # Đổi "src" thành ID của camera (tương tự cv2.VideoCapture(src))
-    src = 1
+    src = "rtsp://admin:comvis123@192.168.100.125/Streaming/Channels/102"
     # src = "test_vid.mp4"
     # src = 0
     name_id = 1
@@ -51,8 +51,8 @@ if __name__ == '__main__':
         time.sleep(.001)
         try:
             if (len(utils.start_q.queue) == utils.order_q.maxsize and
-                len(utils.stop_q.queue) == utils.order_q.maxsize) or \
-                    utils.toggle_q.get_nowait() == 'stop': 
+                len(utils.stop_q.queue) == utils.order_q.maxsize) :
+                    #utils.toggle_q.get_nowait() == 'stop': 
                 print('--- Name ID:', name_id)
                 utils.make_dir(mode='annot', name_id=name_id)
                 path = os.path.join('data', str(name_id), 'annot', str(name_id)+'.txt')

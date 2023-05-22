@@ -39,7 +39,7 @@ def shuffle_clips():
                     cv2.destroyWindow('Clip')
                     break
         elif isinstance(video, numbers.Complex):
-            # print(video)
+            #print(video)
             time.sleep(video)
 
 
@@ -51,12 +51,13 @@ class ShuffleThread:
     @staticmethod
     def shuffle():
         while True:
-            #if utils.toggle_var == 'start' \
-            #        or __name__ == '__main__':
+            keyboard.wait('space')
+            if utils.toggle_var == 'start' \
+                    or __name__ == '__main__':
                 # print(utils.toggle_var)
                 shuffle_clips()
                 print('**** Finished ****')
-                keyboard.wait('space')
             # elif utils.toggle_var != 'start':
             #     print(utils.toggle_var)
+
 
