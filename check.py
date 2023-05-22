@@ -1,52 +1,51 @@
 import cv2
+import os
+import pandas as pd
 
-video_path = ['data/100/100.mp4']
-annotation_path = ['data/100/1.txt']
+csv_files = []
+mp4_files = []
 
-    # Đọc video
+root_dir = 'data'
 
-for video, annot in zip(video_path, annotation_path):
-    # Đọc file annotation
-    capture = cv2.VideoCapture(video)
-    with open(annot, 'r') as file:
-        annot = file.readlines()
-        #start_frame, end_frame, label = annot.strip().split('\t')
-    print(annot)
-    s = list()
-    for a in annot:
-        s.append(a.strip().split('\t'))
-    # Vòng lặp xử lý các khung hình
-    frame_count = 0
-    l = None
-    while True:
-            # Đọc một khung hình từ video
-            ret, frame = capture.read()
-            
-            # Kiểm tra nếu không đọc được khung hình nữa
-            if not ret:
+for dirpath, dirnames, filenames in os.walk(root_dir):
+    for filename in filenames:
+        if filename.endswith('.csv'):
+            csv_files.append(os.path.join(dirpath, filename))
+        elif filename.endswith('.mp4'):
+            mp4_files.append(os.path.join(dirpath, filename))
+
+# Write text
+font = cv2.FONT_HERSHEY_SIMPLEX
+org = (250, 50)
+fontScale = 1
+color = (255, 0, 0)
+thickness = 2
+
+print(mp4_files)
+for video, annot in zip(mp4_files, csv_files):
+    print(video)
+    df = pd.read_csv(annot).to_records()
+    label_ls = df['label']
+    start_ls = df['start']
+    stop_ls = df['stop']
+
+    cap = cv2.VideoCapture(video)
+    length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    for i in range(length):
+        ret, frame = cap.read()
+
+        for start, stop, label in zip(start_ls, stop_ls, label_ls):
+            if start < i < stop:
                 break
+            label = None
 
-            for x in s:
-                start, stop, label = x  
-                if int(start)<frame_count and frame_count<int(stop):
-                     l = label
-                     break
-                else: l = None
-            font = cv2.FONT_HERSHEY_SIMPLEX
-            org = (250, 50)
-            fontScale = 1
-            color = (255, 0, 0)
-            thickness = 2
-            
-            # Hiển thị nhãn của annotation và số khung hình
-            cv2.putText(frame, str(l), (250, 70), font,
-                                fontScale, color, thickness, cv2.LINE_AA)
-            cv2.imshow('frame', frame)
-            
-            # Tăng biến đếm số khung hình
-            frame_count += 1
+        cv2.putText(frame, str(i), (50, 50), font,
+                    fontScale, color, thickness, cv2.LINE_AA)
+        cv2.putText(frame, label, (250, 70), font,
+                    fontScale, color, thickness, cv2.LINE_AA)
+        cv2.imshow('frame', frame)
 
-            cv2.waitKey(10)
-
-    # Giải phóng video capture
-    capture.release()
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+    cap.release()
+    cv2.destroyAllWindows()

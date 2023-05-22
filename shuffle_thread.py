@@ -20,7 +20,6 @@ def shuffle_clips():
     print(playlist)
 
     for video in playlist:
-        print(video)
         if isinstance(video, str):
             time.sleep(DEFAULT_DELAY)
             path = os.path.join(VIDEO_PATH, video+'.mp4')
@@ -36,10 +35,9 @@ def shuffle_clips():
                         break
                 else:
                     cap.release()
-                    cv2.destroyWindow('Clip')
                     break
         elif isinstance(video, numbers.Complex):
-            #print(video)
+            cv2.destroyWindow('Clip')
             time.sleep(video)
 
 
@@ -54,10 +52,7 @@ class ShuffleThread:
             keyboard.wait('space')
             if utils.toggle_var == 'start' \
                     or __name__ == '__main__':
-                # print(utils.toggle_var)
                 shuffle_clips()
                 print('**** Finished ****')
-            # elif utils.toggle_var != 'start':
-            #     print(utils.toggle_var)
 
 
